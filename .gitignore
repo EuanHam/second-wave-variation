@@ -1,1 +1,6 @@
 *.csv
+Textgrids/
+Lib/
+Scripts/
+*.cfg
+speaker_quotes.txt
