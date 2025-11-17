@@ -101,3 +101,51 @@ for (meas in measurements) {
 }
 
 ```
+
+```{r}
+#repeat on male group
+ggplot(m, aes(x= is_Greek, y= Diag_35.TRAP, color = Ethnicity )) +
+  geom_point(position = "jitter") 
+
+```
+
+```{r}
+            
+for (eth in eth_subset)
+  {
+    e <- m[m$Ethnicity == eth,]
+    p <- ggplot(e, aes(x= is_Greek, y =Diag_35.TRAP, color = Ethnicity )) +
+          geom_point()
+    print(p)
+  }
+```
+
+```{r}
+run_speaker_level_stats <- function(.df, .meas) {
+  metric = .meas[1]
+  interpretation = .meas[2]
+  print(paste("Model summary for ", metric))
+  print(.meas[2])
+  additive_model <- lm(as.formula(paste(metric, " ~ is_Greek + Ethnicity")), data=.df)
+  print(summary(additive_model))
+  plot <- plot_model(additive_model, show.values = TRUE, value.offset = .3) + labs(title = paste("Model for ", metric, "\n ", interpretation))
+  print(plot)
+  
+}
+
+measurements = list(c("Diag_80.PRIZE", "lower/backer=SOUTHERN/AAE"),
+                    c("Diag_35.TRAP", "higher/fronter=SOUTHERN/AAE, lower/backer=LBMS"),
+              c("Diag_35.HAND", "higher/fronter=LBMS, lower/backer=other"),
+                    c("Diag_35.FACE", "lower/backer=SOUTHERN, higher/fronter=LBMS"),
+                    c("Diag_35.DRESS", "higher/fronter=SOUTHERN/AAE, lower/backer=LBMS"),
+                    c("Z2_35.GOOSE", "higher (fronter)=SOUTHERN/LBMS, lower (backer)=AAE"),
+                    c("Z2_35.GOAT", "higher (fronter)=SOUTHERN/LBMS, lower (backer)=AAE"),
+              c("lot_thought_pillai", "lower (more MERGED)=LBMS, lower (higher MERGED)=other"),
+                  c("pin_pen_pillai", "lower (more MERGED)=SOUTHERN/AAE, higher (less MERGED)=other"))
+
+                  
+for (meas in measurements) {
+  run_speaker_level_stats(m, meas)
+}
+
+
