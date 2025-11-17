@@ -22,6 +22,27 @@ d$Ethnicity[grepl(",", d$Ethnicity, fixed = TRUE)] <- "MixedRace"
 d$is_Greek[d$is_Greek == ""] <- NA
 d <- d %>% drop_na(is_Greek)
 w <- d[ d$Gender == "Female",]
+m <- d[ d$Gender == "Male",]
+```
+
+# sample size summary - women
+```{r}
+sample_summary_women <- w %>%
+  group_by(Ethnicity, is_Greek) %>%
+  summarise(n = n(), .groups = 'drop') %>%
+  pivot_wider(names_from = is_Greek, values_from = n, values_fill = 0)
+print("Women (Sorority):")
+print(sample_summary_women)
+```
+
+# sample size summary - men
+```{r}
+sample_summary_men <- m %>%
+  group_by(Ethnicity, is_Greek) %>%
+  summarise(n = n(), .groups = 'drop') %>%
+  pivot_wider(names_from = is_Greek, values_from = n, values_fill = 0)
+print("Men (Fraternity):")
+print(sample_summary_men)
 ```
 
 # lets look at traits of LBMS comparing Greek vs NonGreek women OVERALL
@@ -41,8 +62,12 @@ and plots dont show up by default in loops, need to explicitly print
 for (eth in eth_subset)
   {
     e <- w[w$Ethnicity == eth,]
+    n_greek <- sum(e$is_Greek == "yes")
+    n_nongreek <- sum(e$is_Greek == "no")
+    
     p <- ggplot(e, aes(x= is_Greek, y =Diag_35.TRAP, color = Ethnicity )) +
-          geom_point()
+          geom_point() +
+          labs(subtitle = paste0("Greek n=", n_greek, ", Non-Greek n=", n_nongreek))
     print(p)
   }
 ```
